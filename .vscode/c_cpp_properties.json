@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "ESP32",
+            "includePath": [
+                "${workspaceFolder}/limero/linux/",
+                "${workspaceFolder}/limero/inc/",
+                "${workspaceFolder}/ArduinoJson/src",
+                "${workspaceFolder}/hiredis",
+                "${workspaceFolder}/src"
+            ],
+            "defines": [
+                "__linux__",
+                "BROKER_REDIS"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "c++14",
+            //            "intelliSenseMode": "linux-gcc-x64",
+            "forcedInclude": [],
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
