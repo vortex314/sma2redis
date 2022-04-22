@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <vector>
 #include "in_bluetooth.h"
+#include <Log.h>
 
 #define SMADATA2PLUS_STARTBYTE 0x7e
 #define SMADATA2PLUS_L1_HEADER_LEN 18

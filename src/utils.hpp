@@ -1,10 +1,9 @@
 /*
-* Copyright (c) 2013-2017 Ardexa Pty Ltd
-*
-* This code is licensed under GPL v3
-*
-*/
-
+ * Copyright (c) 2013-2017 Ardexa Pty Ltd
+ *
+ * This code is licensed under GPL v3
+ *
+ */
 
 #ifndef UTILS_HPP_INCLUDED
 #define UTILS_HPP_INCLUDED
@@ -22,13 +21,13 @@
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
+#include <Log.h>
 
 #define DATESIZE 64
 #define DOUBLE_SIZE 64
 #define NAME 248
 #define PID_FILE "/run/ardexa-sma-bt.pid"
 
-extern int g_debug;
 
 using namespace std;
 
@@ -45,7 +44,7 @@ bool check_pid_file();
 void remove_pid_file();
 string trim_whitespace(string raw_string);
 bool convert_long(string incoming, long *outgoing);
-bool get_bt_name(string bt_address, string *name_str);
+std::string get_bt_name(string bt_address);
 string get_serial(string device_name);
 
 #endif /* UTILS_HPP_INCLUDED */

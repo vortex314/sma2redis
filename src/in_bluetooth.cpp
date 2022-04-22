@@ -103,9 +103,9 @@ int in_bluetooth_connect_read(struct bluetooth_inverter * inv) {
     }
     else if (result < 0) {
         /* An error ocurred, just print it to stdout */
-        printf("Error on select(): %s\n", strerror(errno));
+        WARN("Error on select(): %s", strerror(errno));
     } else {
-        printf("No data within %d seconds\n", maxWait);
+        WARN("No data within %d seconds", maxWait);
         exit(1);
     }
     return -1;

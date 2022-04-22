@@ -20,28 +20,63 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
 # Set the project name
-PROJECT( ardexa-sma-bt)
+PROJECT( sma2redis)
+add_executable(sma2redis)
+
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g ")
+set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -g ")
+add_definitions(-DLINUX -std=c++17)
 
 # Set the output folder where your program will be created
 set(CMAKE_BINARY_DIR .)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
+set(HIREDIS hiredis )
+set(LINUX limero/linux)
+set(LIMERO limero)
+set(ARDUINOJSON ArduinoJson/src)
 
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -s")
+
+include_directories(
+    src 
+    ${LIMERO}/inc
+    ${LIMERO}/linux
+    ${HIREDIS}
+    ${ARDUINOJSON}
+    ${SEASOCKS_INC}
+    )
 set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES /usr/local/lib ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
 set(CMAKE_CXX_FLAGS "-Wall -fexceptions --std=c++11")
 
 # Source files
-set(ARDEXA_SMA_BT_SRC   main.cpp arguments.cpp utils.cpp in_bluetooth.c in_smadata2plus.c)
-set_source_files_properties(${ARDEXA_SMA_BT_SRC} PROPERTIES LANGUAGE CXX )
+target_sources(sma2redis PRIVATE 
+    src/config.cpp 
+    ${LIMERO}/linux/Redis.cpp
+    ${LIMERO}/linux/Log.cpp
+    ${LIMERO}/linux/Sys.cpp
+    ${LIMERO}/linux/limero.cpp
+    ${LIMERO}/src/printf.c
+    ${LIMERO}/linux/Common.cpp
+    ${LIMERO}/src/StringUtility.cpp
+    src/sma2redis.cpp 
+    src/utils.cpp 
+    src/in_bluetooth.cpp 
+    src/in_smadata2plus.cpp
+    ) 
 
-
-# Build the application
-add_executable(ardexa-sma-bt       ${ARDEXA_SMA_BT_SRC})
-TARGET_LINK_LIBRARIES(ardexa-sma-bt m bluetooth)
-SET_TARGET_PROPERTIES(ardexa-sma-bt PROPERTIES LINKER_LANGUAGE CXX)
+target_link_libraries(sma2redis 
+    -lpthread  
+    -L${HIREDIS} -l:libhiredis.a
+    -lrt  
+    -lm 
+    -lbluetooth
+    -latomic)
+# TARGET_LINK_LIBRARIES(sma2redis m bluetooth)
+SET_TARGET_PROPERTIES(sma2redis PROPERTIES LINKER_LANGUAGE CXX)
 
 # add the install targets
-install (TARGETS ardexa-sma-bt DESTINATION /usr/local/bin)
+install (TARGETS sma2redis DESTINATION /usr/local/bin)
 
 
 

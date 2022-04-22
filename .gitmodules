@@ -1,0 +1,9 @@
+[submodule "limero"]
+	path = limero
+	url = https://github.com/vortex314/limero
+[submodule "ArduinoJson"]
+	path = ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson
+[submodule "hiredis"]
+	path = hiredis
+	url = https://github.com/redis/hiredis
