@@ -62,3 +62,5 @@ b. Then use a `CAPTURE` scenario to collect the csv (comma separated) data from 
 ## Help
 Contact Ardexa, and we'll do our best efforts to help.
 
+# REDIS Connection
+git submodule update --init --recursive

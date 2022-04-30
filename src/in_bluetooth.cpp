@@ -53,7 +53,7 @@ void in_bluetooth_connect(struct bluetooth_inverter * inv) {
 			sizeof(addr));
 
 	if (inv->socket_status < 0) {
-		////////////printf("[BT] Connection to inverter %s failed: %s\n", inv->macaddr, strerror(errno));
+		WARN("[BT] Connection to inverter %s failed: %s\n", inv->macaddr, strerror(errno));
 	}
 
 }
@@ -64,7 +64,7 @@ int in_bluetooth_write(struct bluetooth_inverter * inv, unsigned char * buffer,
 	int status = write(inv->socket_fd, buffer, len);
 
 	buffer_hex_dump(buffer_hex, buffer, len);
-	///////////////////////printf("[BT] Sent %d bytes: %s\n", len, buffer_hex);
+	DEBUG("[BT] Sent %d bytes: %s", len, buffer_hex);
 
 	return status;
 
@@ -92,7 +92,7 @@ int in_bluetooth_connect_read(struct bluetooth_inverter * inv) {
             count = read(inv->socket_fd, inv->buffer, BUFSIZ);
             if (count > 0) {
                 buffer_hex_dump(buffer_hex, inv->buffer, count);
-                /////////////////////printf("[BT] Received %d bytes: %s\n", count, buffer_hex);
+                DEBUG("[BT] Received %d bytes: %s", count, buffer_hex);
             }
 
             inv->buffer_len = count;
@@ -132,7 +132,7 @@ void in_bluetooth_get_my_address(struct bluetooth_inverter * inv,
 	char buffer_hex[6*3];
 
 	buffer_hex_dump(buffer_hex, addr, 6);
-	///log_debug("[BT] My MAC: %s", buffer_hex);
+	DEBUG("[BT] My MAC: %s", buffer_hex);
 }
 
 /* fetch one byte from stream */

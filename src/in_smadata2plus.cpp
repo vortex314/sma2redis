@@ -445,7 +445,7 @@ int in_smadata2plus_level1_packet_read(struct bluetooth_inverter *inv,
 	unsigned char checksumvalidate = SMADATA2PLUS_STARTBYTE ^ len1 ^ len2;
 	if (p->checksum != checksumvalidate)
 	{
-		////DEBUG("[L1] Received packet with wrong Checksum");
+		WARN("[L1] Received packet with wrong Checksum");
 	}
 
 	/* packet_len */
@@ -492,7 +492,7 @@ int in_smadata2plus_level1_packet_read(struct bluetooth_inverter *inv,
 		/* Packet print */
 		char output[BUFSIZ];
 		in_smadata2plus_level1_packet_print(output, p);
-		//////DEBUG("[L1] Received packet with %s", output);
+		DEBUG("[L1] Received packet with %s", output);
 
 		/* Check if contains L2 packet */
 		if (p->length - SMADATA2PLUS_L1_HEADER_LEN > 4 && p->content[0] == SMADATA2PLUS_STARTBYTE && memcmp(p->content + 1, SMADATA2PLUS_L2_HEADER, 4) == 0)
@@ -614,7 +614,7 @@ int in_smadata2plus_level2_packet_gen(struct bluetooth_inverter *inv,
 	/* Packet print */
 	char output[BUFSIZ];
 	in_smadata2plus_level2_packet_print(output, p);
-	/////DEBUG("[L2] Send packet with %s", output);
+	DEBUG("[L2] Send packet with %s", output);
 
 	/** Packet Header **/
 
@@ -669,7 +669,7 @@ int in_smadata2plus_level2_packet_gen(struct bluetooth_inverter *inv,
 	in_smadata2plus_level2_tryfcs16(buffer + 1, len - 1, checksum);
 
 	/* Escape special chars */
-	//////////////int len_bef = len;
+	int len_bef = len;
 	in_smadata2plus_level2_add_escapes(buffer, &len);
 
 	/* Adding checksum */
@@ -679,8 +679,7 @@ int in_smadata2plus_level2_packet_gen(struct bluetooth_inverter *inv,
 	in_smadata2plus_level2_add_escapes(buffer + len, &checksum_len);
 	len += checksum_len;
 
-	/////DEBUG(
-	/////		"[L2] Escaped %d chars, checksum %02x:%02x", len-len_bef, checksum[0], checksum[1]);
+	DEBUG("[L2] Escaped %d chars, checksum %02x:%02x", len-len_bef, checksum[0], checksum[1]);
 
 	/* Trailing Byte */
 	buffer[len++] = SMADATA2PLUS_STARTBYTE;
@@ -714,9 +713,9 @@ void in_smadata2plus_level2_packet_read(unsigned char *buffer, int len,
 	int pos = 0;
 
 	/* Strip escapes */
-	/////////int len_bef = len;
+	int len_bef = len;
 	in_smadata2plus_level2_strip_escapes(buffer, &len);
-	////////int diff = len_bef - len;
+	int diff = len_bef - len;
 
 	/* Remove checksum */
 	len -= 1;
@@ -728,8 +727,7 @@ void in_smadata2plus_level2_packet_read(unsigned char *buffer, int len,
 	in_smadata2plus_level2_tryfcs16(buffer + 1, len - 1, checksum);
 
 	/* Log */
-	////DEBUG(
-	/////		"[L2] Unescaped %d chars, checksum %02x:%02x==%02x:%02x  ", diff, checksum[0], checksum[1], checksum_recv[0], checksum_recv[1]);
+	DEBUG("[L2] Unescaped %d chars, checksum %02x:%02x==%02x:%02x  ", diff, checksum[0], checksum[1], checksum_recv[0], checksum_recv[1]);
 
 	/* Compare checksums */
 	if (memcmp(checksum, checksum_recv, 2) != 0)

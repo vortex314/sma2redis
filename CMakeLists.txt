@@ -57,7 +57,6 @@ target_sources(sma2redis PRIVATE
     ${LIMERO}/linux/Sys.cpp
     ${LIMERO}/linux/limero.cpp
     ${LIMERO}/src/printf.c
-    ${LIMERO}/linux/Common.cpp
     ${LIMERO}/src/StringUtility.cpp
     src/sma2redis.cpp 
     src/utils.cpp 
