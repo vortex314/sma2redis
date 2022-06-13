@@ -1150,7 +1150,7 @@ void buffer_hex_dump(char *output, unsigned char *buffer, int len)
 	{
 
 		sprintf(hex, "%02x:", buffer[i]);
-		strncat(output, hex, sizeof(hex));
+		strncat(output, hex, 3);
 	}
 
 	// remove last colon
