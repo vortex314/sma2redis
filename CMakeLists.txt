@@ -17,7 +17,7 @@
 # 1.	Makesure the bluetooth dev library is installed.... via: sudo apt-get install -y libbluetooth-dev
 #
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
 # Set the project name
 PROJECT( sma2redis)
