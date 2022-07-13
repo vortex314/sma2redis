@@ -29,11 +29,9 @@
 #include <hiredis.h>
 #include <Redis.h>
 #include <StringUtility.h>
+#include <ConfigFile.h>
 
 Log logger;
-std::string loadFile(const char *name);
-bool loadConfig(JsonObject cfg, int argc, char **argv);
-void deepMerge(JsonVariant dst, JsonVariant src);
 using namespace std;
 
 void process_data(vector<vec_data> data_vector, int debug, string &line, string &header);
@@ -65,14 +63,16 @@ std::unordered_map<std::string, std::string> inputToRedisLabels = {
 int main(int argc, char **argv)
 {
     INFO("Loading configuration.");
-    DynamicJsonDocument config(10240);
-    loadConfig(config.to<JsonObject>(), argc, argv);
+    Json config;
+    config["redis"]["host"] = "localhost";
+    config["redis"]["port"] = 6379;
+    configurator(config, argc, argv);
     Thread workerThread("worker");
 
     Redis redis(workerThread, config["redis"].as<JsonObject>());
     redis.connect();
 
-    TimerSource clock(workerThread,1 * 60 * 1000, true, "clock");
+    TimerSource clock(workerThread, 1 * 60 * 1000, true, "clock");
 
     std::vector<std::string> devices;
     for (auto dev : config["sma"]["devices"].as<JsonArray>())
@@ -121,61 +121,6 @@ int main(int argc, char **argv)
 }
 
 
-bool loadConfig(JsonObject cfg, int argc, char **argv)
-{
-    // override args
-    int c;
-    while ((c = getopt(argc, argv, "h:p:s:b:f:t:v")) != -1)
-        switch (c)
-        {
-        case 'f':
-        {
-            std::string s = loadFile(optarg);
-            DynamicJsonDocument doc(10240);
-            deserializeJson(doc, s);
-            deepMerge(cfg, doc);
-            break;
-        }
-        case 'h':
-            cfg["redis"]["host"] = optarg;
-            break;
-        case 'p':
-            cfg["redis"]["port"] = atoi(optarg);
-            break;
-        case 'v':
-        {
-            logger.setLevel(Log::L_DEBUG);
-            break;
-        }
-        case '?':
-            printf("Usage %s -h <host> -p <port> \n",
-                   argv[0]);
-            break;
-        default:
-            WARN("Usage %s -h <host> -p <port> \n",
-                 argv[0]);
-            abort();
-        }
-    std::string s;
-    serializeJson(cfg, s);
-    INFO("config:%s", s.c_str());
-    return true;
-};
-
-void deepMerge(JsonVariant dst, JsonVariant src)
-{
-    if (src.is<JsonObject>())
-    {
-        for (auto kvp : src.as<JsonObject>())
-        {
-            deepMerge(dst.getOrAddMember(kvp.key()), kvp.value());
-        }
-    }
-    else
-    {
-        dst.set(src);
-    }
-}
 
 void dataToRedis(Redis &redis, std::vector<vec_data> &data, std::string serial)
 {
@@ -188,9 +133,10 @@ void dataToRedis(Redis &redis, std::vector<vec_data> &data, std::string serial)
         {
             labels = r->second;
         }
-        if ( (iter.name.rfind("voltage",0)==0 || 
-        iter.name.rfind("current",0)==0 || 
-        iter.name.rfind("power_ac_l3",0)==0) && iter.value > 16700.0)
+        if ((iter.name.rfind("voltage", 0) == 0 ||
+             iter.name.rfind("current", 0) == 0 ||
+             iter.name.rfind("power_ac_l3", 0) == 0) &&
+            iter.value > 16700.0)
             iter.value = 0.0;
         std::string cmd =
             stringFormat("TS.ADD sma:%s:%s * %f LABELS %s ", serial.c_str(), iter.name.c_str(), iter.value, labels.c_str());

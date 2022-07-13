@@ -51,11 +51,12 @@ set(CMAKE_CXX_FLAGS "-Wall -fexceptions --std=c++11")
 
 # Source files
 target_sources(sma2redis PRIVATE 
-    src/config.cpp 
     ${LIMERO}/linux/Redis.cpp
     ${LIMERO}/linux/Log.cpp
     ${LIMERO}/linux/Sys.cpp
     ${LIMERO}/linux/limero.cpp
+    ${LIMERO}/linux/ConfigFile.cpp
+    ${LIMERO}/linux/LogFile.cpp
     ${LIMERO}/src/printf.c
     ${LIMERO}/src/StringUtility.cpp
     src/sma2redis.cpp 
